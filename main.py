@@ -10,16 +10,30 @@ GREEN = "\033[1;32;40m"
 YELLOW = "\033[1;33;40m"
 
 def main():
-    # open up Duolingo
+    # init driver
     driver = webdriver.Chrome()
-    driver.implicitly_wait(2)
-    driver.get("https://www.duolingo.com")
-    assert "Duolingo" in driver.title
+    driver.implicitly_wait(3)
 
-    # navigate to login page
-    driver.find_element(By.CSS_SELECTOR, 'button._1Qh5D._36g4N._2YF0P.-TeUZ._2Ccfj').click()
+    # open up Duo
+    driver.get("https://www.duolingo.com")
+    try:
+        element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'button._1Qh5D._36g4N._2YF0P.-TeUZ._2Ccfj'))
+            )
+    except:
+        print(f"{RED}Unable to access Duolingo. Exiting..")
+        exit(0)
+
+    # navigate to login page and login
+    element.click()
     login(driver)
+
+    # start a lesson
+    driver.find_element(By.CSS_SELECTOR, 'div._1DLP9._27IMa').click()
+    driver.find_element(By.PARTIAL_LINK_TEXT, 'START').click()
+    input()
     
+
 
 def login(driver):
     # ask user to login
@@ -32,7 +46,7 @@ def login(driver):
 
     # detect the login
     try:
-        element = WebDriverWait(driver, 7).until(
+        WebDriverWait(driver, 7).until(
                 EC.presence_of_element_located((By.XPATH, "//a[@href='/learn'][@class='_1Mak3']"))
             )
     except:
