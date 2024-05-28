@@ -82,13 +82,17 @@ def complete_lesson(driver):
 
     while True:
         # detect question type
-        questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+        try:
+            questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+        except:
+            # if question does not exist, click continue
+            driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
         questionType = questionContainer.get_attribute("data-test")
 
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
         question.answerQuestion()
-        sleep(0.5)
+        sleep(0.4)
 
         if question.isWrong():
             question.recordAnswer()
@@ -96,7 +100,7 @@ def complete_lesson(driver):
         else:
             print(f"{GREEN}Question answered correctly!\n")
         question.clickNext()
-        sleep(0.5)
+        sleep(0.4)
 
     
 
