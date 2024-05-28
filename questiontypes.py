@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion}
+        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenTapQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
@@ -103,3 +103,8 @@ class TranslationQuestion(Question):
                     choices.pop(j)
                 break
         self.clickNext()
+
+class ListenTapQuestion(Question):
+    questionType = "Listen"
+    def guess(self):
+        self.driver.find_element(By.XPATH, "//button[@data-test='player-skip']").click()
