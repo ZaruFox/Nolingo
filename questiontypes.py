@@ -9,9 +9,9 @@ class Question:
     allQuestions = {}
 
     def __init__(self, driver):
+        self.driver = driver
         self.questionData = self.recordQuestion()
         self.answer = ""
-        self.driver = driver
 
     @classmethod
     def getQuestion(cls, questionType, driver):
