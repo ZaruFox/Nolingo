@@ -5,7 +5,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class Question:
-    questionType = "Question Base Class"
     def __init__(self, driver):
         self.questionData = ""
         self.answer = ""
@@ -45,13 +44,17 @@ class Question:
     def getQuestion(self):
         # uses child class definition
         pass    
-
-    def __hash__(self):
-        return hash(self.questionData)
     
     def __repr__(self):
-        return f"Question Type: {type(self).questionType}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
+        return f"Question Type: {type(self)}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
     
     
 class SelectionQuestion(Question):
-    pass
+    def getQuestion(self):
+        self.questionData = self.driver.find_element(By.XPATH, "//h1[@data-test='challange-header']/span").getText()
+
+    def trial(self):
+        self.driver.find_element(By.CSS_SELECTOR, "span._1NM0v").click()
+
+    def solve(self):
+        self.driver.find_element(By.XPATH, f"//span[text()='{self.answer}']")
