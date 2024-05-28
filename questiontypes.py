@@ -24,8 +24,9 @@ class Question:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
         newQuestion = questionsMap[newQuestionType](driver)
-        if newQuestion.questionData in cls.allQuestions:
-            return cls.allQuestions[newQuestion.questionData]
+        if str(newQuestion) in cls.allQuestions:
+            return cls.allQuestions[str(newQuestion)]
+        cls.allQuestions[str(newQuestion)] = newQuestion
         return newQuestion
 
     def recordAnswer(self):
@@ -61,6 +62,9 @@ class Question:
     
     def __repr__(self):
         return f"Question Type: {type(self).questionType}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
+    
+    def __str__(self):
+        return f"{type(self).questionType}{self.questionData}"
     
     
 class SelectionQuestion(Question):
