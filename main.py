@@ -84,10 +84,10 @@ def complete_lesson(driver):
         # detect question type
         try:
             questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+            questionType = questionContainer.get_attribute("data-test")
         except:
             # if question does not exist, click continue
             driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
-        questionType = questionContainer.get_attribute("data-test")
 
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
