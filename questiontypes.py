@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion}
+        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
@@ -78,3 +78,27 @@ class SelectionQuestion(Question):
     def solve(self):
         self.driver.find_element(By.XPATH, f"//span[text()='{self.answer}']")
         self.clickNext()
+
+
+class TranslationQuestion(Question):
+    questionType = "Translation"
+    def recordQuestion(self):
+        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span[@class='_2IGwo XxgPa']")
+        self.questionData = "".join([x.text for x in tmp])
+        
+    def guess(self):
+        self.driver.find_element(By.XPATH, "//span[@data-test='challenge-tap-token-text']").click()
+        self.clickNext()
+
+    def solve(self):
+        choices = self.driver.find_elements(By.XPATH, "//span[@data-test='challenge-tap-token-text']").sort(key=lambda x:len(x.text))
+        target = " ".join([s.strip(",.!?:;") for s in self.answer.split()])
+
+        i = 0
+        while i < len(target):
+            for j, choice in enumerate(choices):
+                if choice.text == target[i:i+len(choice.text)]:
+                    choice.click()
+                    i += len(choice.text)+1
+                    choices.pop(j)
+                break
