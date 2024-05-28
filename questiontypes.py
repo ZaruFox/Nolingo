@@ -121,7 +121,7 @@ class TapCompleteQuestion(Question):
         self.clickNext()
 
     def solve(self):
-        choices = self.driver.find_elements(By.XPATH, "//span[@data-test='challenge-tap-token-text']").sort(key=lambda x:len(x.text))
+        choices = self.driver.find_elements(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").sort(key=lambda x:len(x.text))
 
         i = 0
         while i < len(self.answer):
@@ -136,3 +136,21 @@ class TapCompleteQuestion(Question):
                 break
 
         self.clickNext()
+
+class MatchQuestion(Question):
+    questionType = "Match"
+    def guess(self):
+        choices = self.driver.find_elements(By.XPATH, "//div[@class='_1bmNz _3rat3']/span[@class='_3VyQa']")
+        choices1 = choices[:len(choices)//2]
+        choices2 = choices[len(choices)//2:]
+        for c1 in choices1:
+            for c2 in choices2:
+                if c2.get_attribute("aria-disabled") == "false":
+                    c1.click()
+                    c2.click()
+
+                if c1.get_attribute("aria-disabled") == "true":
+                    break
+        
+
+        
