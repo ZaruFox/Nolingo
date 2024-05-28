@@ -117,7 +117,7 @@ class TapCompleteQuestion(Question):
         self.questionData = "".join([x.text for x in tmp])
 
     def guess(self):
-        self.driver.find_element(By.XPATH, "//span[@data-test='challenge-tap-token-text']").click()
+        self.driver.find_element(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").click()
         self.clickNext()
 
     def solve(self):
