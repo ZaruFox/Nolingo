@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenTapQuestion, "challenge challenge-tapComplete": TapCompleteQuestion}
+        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenTapQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
@@ -73,7 +73,7 @@ class SelectionQuestion(Question):
         self.questionData = self.driver.find_element(By.XPATH, "//h1[@data-test='challenge-header']/span").text
 
     def guess(self):
-        self.driver.find_element(By.CSS_SELECTOR, "span._1NM0v").click()
+        self.driver.find_element(By.XPATH, "//div[@data-test='challenge-choice']").click()
         self.clickNext()
 
     def solve(self):
@@ -93,17 +93,21 @@ class TranslationQuestion(Question):
 
     def solve(self):
         # matches largest choice to target string
-        choices = self.driver.find_elements(By.XPATH, "//span[@data-test='challenge-tap-token-text']").sort(key=lambda x:len(x.text))
+        choices = self.driver.find_elements(By.XPATH, "//span[@data-test='challenge-tap-token-text']")
+        choices.sort(key=lambda x:len(x.text), reverse=True)
         target = " ".join([s.strip(",.!?:;") for s in self.answer.split()])
 
         i = 0
         while i < len(target):
+            if target[i] == " ":
+                i += 1
+
             for j, choice in enumerate(choices):
                 if choice.text == target[i:i+len(choice.text)]:
                     choice.click()
-                    i += len(choice.text)+1
+                    i += len(choice.text)
                     choices.pop(j)
-                break
+                    break
         self.clickNext()
 
 
@@ -117,34 +121,42 @@ class ListenTapQuestion(Question):
 class TapCompleteQuestion(Question):
     questionType = "Tap Complete"
     def recordQuestion(self):
-        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
-        self.questionData = "".join([x.text for x in tmp])
+        sentence = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
+
+        for ele in sentence:
+            if ele.text == "":
+                self.questionData += " "
+            else:
+                self.questionData += ele.text
 
     def guess(self):
         self.driver.find_element(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").click()
         self.clickNext()
 
     def solve(self):
-        choices = self.driver.find_elements(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").sort(key=lambda x:len(x.text))
+        choices = self.driver.find_elements(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']")
+        choices.sort(key=lambda x:len(x.text), reverse=True)
 
         i = 0
+        j = 0
         while i < len(self.answer):
-            while self.answer[i] == self.questionData[i]:
+            while self.answer[i] == self.questionData[j]:
                 i += 1
-
-            for j, choice in enumerate(choices):
+                j += 1
+            
+            for k, choice in enumerate(choices):
                 if choice.text == self.answer[i:i+len(choice.text)]:
                     choice.click()
                     i += len(choice.text)
-                    choices.pop(j)
-                break
+                    choices.pop(k)
+                    break
 
         self.clickNext()
 
 class MatchQuestion(Question):
     questionType = "Match"
     def guess(self):
-        choices = self.driver.find_elements(By.XPATH, "//div[@class='_1bmNz _3rat3']/span[@class='_3VyQa']")
+        choices = self.driver.find_elements(By.CSS_SELECTOR, "span button")
         choices1 = choices[:len(choices)//2]
         choices2 = choices[len(choices)//2:]
         for c1 in choices1:
@@ -156,5 +168,13 @@ class MatchQuestion(Question):
                 if c1.get_attribute("aria-disabled") == "true":
                     break
         
-
-        
+class AssistQuestion(Question):
+    questionType = "Assist"
+    def recordQuestion(self):
+        self.questionData = self.driver.find_element(By.CSS_SELECTOR, "div._2L10X").text
+    def guess(self):
+        self.driver.find_element(By.XPATH, "//span[@data-test='challenge-judge-text']").click()
+        self.clickNext()
+    def solve(self):
+        self.driver.find_element(By.XPATH, f"//span[@data-test='challenge-judge-text'][text()='{self.answer}']").click()
+        self.clickNext()

@@ -81,10 +81,10 @@ def complete_lesson(driver):
         exit(0)
 
     while True:
+        sleep(0.4)
         # skip if it is transition screen
         if (skipButton := driver.find_element(By.XPATH, "//button[@data-test='player-next']/span")).text.lower() == "continue":
             skipButton.click()
-            sleep(0.4)
             continue
 
         # detect question type
@@ -102,7 +102,6 @@ def complete_lesson(driver):
         else:
             print(f"{GREEN}Question answered correctly!\n")
         question.clickNext()
-        sleep(0.4)
 
     
 
