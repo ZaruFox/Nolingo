@@ -22,7 +22,7 @@ class Question:
 
     def recordAnswer(self):
         # saves answer to self.answer, only use when self.isWrong() is true.
-        self.answer = self.driver.find_element(By.CSS_SELECTOR, "div._2jz5U.o-3Ru").getText()
+        self.answer = self.driver.find_element(By.CSS_SELECTOR, "div._2jz5U.o-3Ru").text
         return True
 
     def isWrong(self):
@@ -32,29 +32,35 @@ class Question:
             return True
         except:
             return False
+        
+    def clickNext(self):
+        self.driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
 
     def solve(self):
         # uses child class definition
         pass
 
-    def trial(self):
-        # uses child class definition
+    def guess(self):
+        # use child class definition
         pass    
 
-    def getQuestion(self):
+    def recordQuestion(self):
         # uses child class definition
         pass    
     
     def __repr__(self):
-        return f"Question Type: {type(self)}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
+        return f"Question Type: {type(self).questionType}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
     
     
 class SelectionQuestion(Question):
-    def getQuestion(self):
-        self.questionData = self.driver.find_element(By.XPATH, "//h1[@data-test='challange-header']/span").getText()
+    questionType = "Selection"
+    def recordQuestion(self):
+        self.questionData = self.driver.find_element(By.XPATH, "//h1[@data-test='challenge-header']/span").text
 
-    def trial(self):
+    def guess(self):
         self.driver.find_element(By.CSS_SELECTOR, "span._1NM0v").click()
+        self.clickNext()
 
     def solve(self):
         self.driver.find_element(By.XPATH, f"//span[text()='{self.answer}']")
+        self.clickNext()
