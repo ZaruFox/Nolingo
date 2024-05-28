@@ -88,6 +88,7 @@ def complete_lesson(driver):
         except:
             # if question does not exist, click continue
             driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
+            continue
 
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
