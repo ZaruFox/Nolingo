@@ -83,7 +83,7 @@ class SelectionQuestion(Question):
 class TranslationQuestion(Question):
     questionType = "Translation"
     def recordQuestion(self):
-        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span[@class='_2IGwo XxgPa']")
+        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
         self.questionData = "".join([x.text for x in tmp])
         
     def guess(self):
