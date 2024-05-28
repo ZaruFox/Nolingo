@@ -5,20 +5,27 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class Question:
+    questionType = "Base Question"
+    allQuestions = {}
+
     def __init__(self, driver):
-        self.questionData = ""
+        self.questionData = self.recordQuestion()
         self.answer = ""
         self.driver = driver
 
     @classmethod
-    def createQuestion(cls, questionType, driver):
+    def getQuestion(cls, questionType, driver):
         # initializes correct question type class given duolingo's question type
+        # OR if question was seen before, return the question object
+
         questionsMap = {"challenge challenge-select": SelectionQuestion}
-
-        if questionType in questionsMap:
-            return questionsMap[questionType](driver)
-        raise Exception("Question Type not found")
-
+        if questionType not in questionsMap:
+            raise Exception("Question Type not found")
+        
+        newQuestion = questionsMap[questionType](driver)
+        if newQuestion.questionData in cls.allQuestions:
+            return cls.allQuestions[newQuestion.questionData]
+        return newQuestion
 
     def recordAnswer(self):
         # saves answer to self.answer, only use when self.isWrong() is true.
@@ -35,6 +42,12 @@ class Question:
         
     def clickNext(self):
         self.driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
+
+    def answer(self):
+        if self.answer:
+            self.solve()
+        else:
+            self.guess()
 
     def solve(self):
         # uses child class definition
