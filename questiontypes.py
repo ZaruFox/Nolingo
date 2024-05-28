@@ -77,7 +77,7 @@ class SelectionQuestion(Question):
         self.clickNext()
 
     def solve(self):
-        self.driver.find_element(By.XPATH, f"//span[text()='{self.answer}']")
+        self.driver.find_element(By.XPATH, f"//span[text()='{self.answer}']").click()
         self.clickNext()
 
 
