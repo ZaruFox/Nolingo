@@ -81,14 +81,15 @@ def complete_lesson(driver):
         exit(0)
 
     while True:
-        # detect question type
-        try:
-            questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
-            questionType = questionContainer.get_attribute("data-test")
-        except:
-            # if question does not exist, click continue
-            driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
+        # skip if it is transition screen
+        if (skipButton := driver.find_element(By.XPATH, "//button[@data-test='player-next']/span")).text.lower() == "continue":
+            skipButton.click()
+            sleep(0.4)
             continue
+
+        # detect question type
+        questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+        questionType = questionContainer.get_attribute("data-test")
 
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
