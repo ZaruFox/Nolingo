@@ -35,11 +35,8 @@ class Question:
 
     def isWrong(self):
         # returns True if current question is wrong
-        try:
-            self.driver.find_element(By.XPATH, "//img[@src='https://d35aaqx5ub95lt.cloudfront.net/images/bd13fa941b2407b4914296afe4435646.svg']")
-            return True
-        except:
-            return False
+        element = self.driver.find_element(By.XPATH, "//div[@class='_1k6eg']")
+        return element.get_attribute("data-test") == "blame blame-incorrect"
         
     def clickNext(self):
         self.driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
