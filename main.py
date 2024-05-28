@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from time import sleep
 
 # print colours
 RED = "\033[1;31;40m"
@@ -30,7 +31,9 @@ def main():
 
     # start a lesson
     driver.find_element(By.CSS_SELECTOR, 'div._1DLP9._27IMa').click()
-    driver.find_element(By.PARTIAL_LINK_TEXT, 'START').click()
+    sleep(0.5)
+    driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
+    complete_lesson(driver)
     input()
     
 
@@ -55,6 +58,19 @@ def login(driver):
         
     print(f"{GREEN}Logged In!")
 
+def complete_lesson(driver):
+    # wait for lesson to load
+    try:
+        WebDriverWait(driver, 30).until(
+                EC.presence_of_element_located((By.XPATH, "//button[@data-test='quit-button']"))
+            )
+    except:
+        print(f"{RED}Lesson load timed out. Exiting..")
+        exit(0)
+
+    # detect question type
+    questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+    questionType = questionContainer.get_attribute("data-test")
 
 if __name__ == "__main__":
     main()
