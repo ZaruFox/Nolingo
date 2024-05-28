@@ -11,6 +11,16 @@ class Question:
         self.answer = ""
         self.driver = driver
 
+    @classmethod
+    def createQuestion(cls, questionType, driver):
+        # initializes correct question type class given duolingo's question type
+        questionsMap = {"challenge challenge-select": SelectionQuestion}
+
+        if questionType in questionsMap:
+            return questionsMap[questionType](driver)
+        raise Exception("Question Type not found")
+
+
     def recordAnswer(self):
         # saves answer to self.answer, only use when self.isWrong() is true.
         self.answer = self.driver.find_element(By.CSS_SELECTOR, "div._2jz5U.o-3Ru").getText()
@@ -43,3 +53,5 @@ class Question:
         return f"Question Type: {type(self).questionType}\nQuestion: {self.questionData}\nAnswer: {self.answer}"
     
     
+class SelectionQuestion(Question):
+    pass

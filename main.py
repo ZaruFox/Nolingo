@@ -67,6 +67,8 @@ def login(driver):
         
     print(f"{GREEN}Logged In!")
 
+
+
 def complete_lesson(driver):
     # wait for lesson to load
     try:
@@ -80,6 +82,7 @@ def complete_lesson(driver):
     # detect question type
     questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
     questionType = questionContainer.get_attribute("data-test")
+    
 
 if __name__ == "__main__":
     main()
