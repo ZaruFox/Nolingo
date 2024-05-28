@@ -5,6 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import os
+from questiontypes import *
 
 # print colours
 RED = "\033[1;31;40m"
@@ -65,7 +66,7 @@ def login(driver):
         print(f"{RED}Login Failed. Exiting..")
         exit(0)
         
-    print(f"{GREEN}Logged In!")
+    print(f"{GREEN}Logged In!\n")
 
 
 
@@ -79,9 +80,24 @@ def complete_lesson(driver):
         print(f"{RED}Lesson load timed out. Exiting..")
         exit(0)
 
-    # detect question type
-    questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
-    questionType = questionContainer.get_attribute("data-test")
+    while True:
+        # detect question type
+        questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
+        questionType = questionContainer.get_attribute("data-test")
+
+        print(f"{YELLOW}Reading question...")
+        question = Question.getQuestion(questionType, driver)
+        question.answerQuestion()
+        sleep(0.5)
+
+        if question.isWrong():
+            question.recordAnswer()
+            print(f"{RED}Question answered wrongly, question saved as:\n{question}\n")
+        else:
+            print(f"{GREEN}Question answered correctly!\n")
+        question.clickNext()
+        sleep(0.5)
+
     
 
 if __name__ == "__main__":
