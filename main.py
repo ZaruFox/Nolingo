@@ -32,7 +32,17 @@ def main():
     login(driver)
 
     # start a lesson
-    driver.find_element(By.CSS_SELECTOR, 'div._1DLP9._27IMa').click()
+    while True:
+        try:
+            element = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, 'div._1DLP9._27IMa'))
+                )
+            element.click()
+            break
+        except:
+            print(f"{RED}Please close any notifications, retrying in 3 seconds...")
+            sleep(3)
+
     sleep(0.5)
     driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
     complete_lesson(driver)
@@ -73,12 +83,16 @@ def login(driver):
 def complete_lesson(driver):
     # wait for lesson to load
     try:
-        WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.XPATH, "//button[@data-test='quit-button']"))
+        skipButton = WebDriverWait(driver, 30).until(
+                EC.presence_of_element_located((By.XPATH, "//button[@data-test='player-next']/span"))
             )
     except:
         print(f"{RED}Lesson load timed out. Exiting..")
         exit(0)
+
+    # get pass challange screen if it shows up
+    if "start challenge" in skipButton.text.lower():
+        skipButton.click()
 
     while True:
         sleep(0.4)
