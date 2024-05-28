@@ -10,19 +10,20 @@ class Question:
 
     def __init__(self, driver):
         self.driver = driver
-        self.questionData = self.recordQuestion()
+        self.questionData = ""
         self.answer = ""
+        self.recordQuestion()
 
     @classmethod
-    def getQuestion(cls, questionType, driver):
+    def getQuestion(cls, newQuestionType, driver):
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
         questionsMap = {"challenge challenge-select": SelectionQuestion}
-        if questionType not in questionsMap:
-            raise Exception("Question Type not found")
+        if newQuestionType not in questionsMap:
+            raise Exception(f"Question Type not found: {newQuestionType}")
         
-        newQuestion = questionsMap[questionType](driver)
+        newQuestion = questionsMap[newQuestionType](driver)
         if newQuestion.questionData in cls.allQuestions:
             return cls.allQuestions[newQuestion.questionData]
         return newQuestion
@@ -43,7 +44,7 @@ class Question:
     def clickNext(self):
         self.driver.find_element(By.XPATH, "//button[@data-test='player-next']").click()
 
-    def answer(self):
+    def answerQuestion(self):
         if self.answer:
             self.solve()
         else:
