@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
+import os
 
 # print colours
 RED = "\033[1;31;40m"
@@ -39,12 +40,20 @@ def main():
 
 
 def login(driver):
-    # ask user to login
+    # get account details
     print(f"{YELLOW}Please login to your Schools Duolingo account. Ensure you are not using a Google/Facebook account.")
-    username = driver.find_element(By.ID, "web-ui1")
-    username.send_keys(input("Username/Email: "))
-    password = driver.find_element(By.ID, "web-ui2")
-    password.send_keys(input("Password: "))
+    if "duo-user" in os.environ and "duo-pass" in os.environ:
+        print(f"{GREEN}Logining in...")
+        username = os.environ["duo-user"]
+        password = os.environ["duo-pass"]
+    else:
+        print(f"{YELLOW}To auto-login, add 'duo-user' and 'duo-pass' to env. However, this is not recommended for security concerns.")
+        username = input("Username/Email: ")
+        password = input("Password: ")
+
+    # login
+    driver.find_element(By.ID, "web-ui1").send_keys(username)
+    driver.find_element(By.ID, "web-ui2").send_keys(password)
     driver.find_element(By.CSS_SELECTOR, 'button.WxjqG._1x5JY._1M9iF._36g4N._2YF0P._1QN-w').click()
 
     # detect the login
