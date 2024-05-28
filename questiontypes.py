@@ -102,3 +102,4 @@ class TranslationQuestion(Question):
                     i += len(choice.text)+1
                     choices.pop(j)
                 break
+        self.clickNext()
