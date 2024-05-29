@@ -105,10 +105,11 @@ def complete_lesson(driver):
         questionContainer = driver.find_element(By.CSS_SELECTOR, 'div._1fxa4._1Mopf')
         questionType = questionContainer.get_attribute("data-test")
 
+        # solve question
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
         question.answerQuestion()
-        sleep(0.4)
+        sleep(0.25)
 
         if question.isWrong():
             question.recordAnswer()
@@ -117,6 +118,9 @@ def complete_lesson(driver):
             print(f"{GREEN}Question answered correctly!\n")
         question.clickNext()
 
+        # if progress bar is full, break out of the loop
+        if driver.find_element(By.XPATH, "//div[@aria-valuemax='1']").get_attribute("aria-valuenow") == "1":
+            break
     
 
 if __name__ == "__main__":
