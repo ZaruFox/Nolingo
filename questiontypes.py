@@ -129,6 +129,8 @@ class TapCompleteQuestion(Question):
             else:
                 self.questionData += ele.text
 
+        self.questionData = self.questionData.strip(".!?")
+
     def guess(self):
         self.driver.find_element(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").click()
         self.clickNext()
@@ -136,20 +138,21 @@ class TapCompleteQuestion(Question):
     def solve(self):
         choices = self.driver.find_elements(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']")
         choices.sort(key=lambda x:len(x.text), reverse=True)
+        self.answer = self.answer.strip(".?!")
 
         i = 0
         j = 0
         while i < len(self.answer):
-            while self.answer[i] == self.questionData[j]:
+            if self.answer[i] == self.questionData[j]:
                 i += 1
                 j += 1
-            
-            for k, choice in enumerate(choices):
-                if choice.text == self.answer[i:i+len(choice.text)]:
-                    choice.click()
-                    i += len(choice.text)
-                    choices.pop(k)
-                    break
+            else:
+                for k, choice in enumerate(choices):
+                    if choice.text == self.answer[i:i+len(choice.text)]:
+                        choice.click()
+                        i += len(choice.text)
+                        choices.pop(k)
+                        break
 
         self.clickNext()
 
