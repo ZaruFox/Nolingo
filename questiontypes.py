@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion}
+        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
@@ -132,7 +132,7 @@ class TapCompleteQuestion(Question):
         self.questionData = self.questionData.strip(".!?")
 
     def guess(self):
-        self.driver.find_element(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']").click()
+        [x.click() for x in self.driver.find_elements(By.XPATH, "//div[@data-test='word-bank']/div/span/button/span/span[@data-test='challenge-tap-token-text']")]
         self.clickNext()
 
     def solve(self):
@@ -180,4 +180,27 @@ class AssistQuestion(Question):
         self.clickNext()
     def solve(self):
         self.driver.find_element(By.XPATH, f"//span[@data-test='challenge-judge-text'][text()='{self.answer}']").click()
+        self.clickNext()
+
+class TextTranslationQuestion(Question):
+    questionType = "TextTranslation"
+    def recordQuestion(self):
+        try:
+            toggle = self.driver.find_element(By.XPATH, "//button[@data-test='player-toggle-keyboard']")
+            if "harder" in toggle.text.lower():
+                toggle.click()
+        except:
+            pass
+
+        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
+        self.questionData = "".join([x.text for x in tmp])
+
+    def guess(self):
+        textarea = self.driver.find_element(By.XPATH, "//textarea[@data-test='challenge-translate-input']")
+        textarea.send_keys("a")
+        self.clickNext()
+
+    def solve(self):
+        textarea = self.driver.find_element(By.XPATH, "//textarea[@data-test='challenge-translate-input']")
+        textarea.send_keys(self.answer)
         self.clickNext()
