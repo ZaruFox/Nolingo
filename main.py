@@ -113,7 +113,7 @@ def complete_lesson(driver):
 
         if question.isWrong():
             question.recordAnswer()
-            print(f"{RED}Question answered wrongly, question saved as:\n{question}\n")
+            print(f"{RED}Question answered wrongly, question saved as:\n{repr(question)}\n")
         else:
             print(f"{GREEN}Question answered correctly!\n")
         question.clickNext()
@@ -121,6 +121,11 @@ def complete_lesson(driver):
         # if progress bar is full, break out of the loop
         if driver.find_element(By.XPATH, "//div[@aria-valuemax='1']").get_attribute("aria-valuenow") == "1":
             break
+
+    element = WebDriverWait(driver, 60).until(
+            EC.text_to_be_present_in_element((By.XPATH, "//button[@data-test='player-next']/span"), "CONTINUE")
+        )
+    element.click()
     
 
 if __name__ == "__main__":
