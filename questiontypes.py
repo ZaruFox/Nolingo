@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion, "challenge challenge-gapFill": GapFillQuestion}
+        questionsMap = {"challenge challenge-listenIsolation": ListenQuestion, "challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion, "challenge challenge-gapFill": GapFillQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
