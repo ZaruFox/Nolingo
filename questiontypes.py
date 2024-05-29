@@ -19,7 +19,7 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion, "challenge challenge-gapFill": AssistQuestion}
+        questionsMap = {"challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion, "challenge challenge-gapFill": GapFillQuestion}
         if newQuestionType not in questionsMap:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
@@ -204,3 +204,8 @@ class TextTranslationQuestion(Question):
         textarea = self.driver.find_element(By.XPATH, "//textarea[@data-test='challenge-translate-input']")
         textarea.send_keys(self.answer)
         self.clickNext()
+
+class GapFillQuestion(AssistQuestion):
+    def recordQuestion(self):
+        tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
+        self.questionData = "".join([x.text for x in tmp])
