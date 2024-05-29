@@ -142,8 +142,8 @@ class TapCompleteQuestion(Question):
 
         i = 0
         j = 0
-        while i < len(self.answer) and j < len(self.questionData):
-            if self.answer[i] == self.questionData[j]:
+        while i < len(self.answer):
+            if j < len(self.questionData) and self.answer[i] == self.questionData[j]:
                 i += 1
                 j += 1
             else:
