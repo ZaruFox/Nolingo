@@ -46,7 +46,9 @@ def main():
 
         sleep(0.5)
         driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
+        print(f"{YELLOW} Starting Lesson..")
         complete_lesson(driver)
+        print(f"{GREEN} Lesson Complete!")
         driver.get("https://www.duolingo.com/learn")
     
 
@@ -109,6 +111,7 @@ def complete_lesson(driver):
         # solve question
         print(f"{YELLOW}Reading question...")
         question = Question.getQuestion(questionType, driver)
+        print(f"{YELLOW}Answering question...")
         question.answerQuestion()
         sleep(0.25)
 
@@ -122,6 +125,11 @@ def complete_lesson(driver):
         # if progress bar is full, break out of the loop
         if driver.find_element(By.XPATH, "//div[@aria-valuemax='1']").get_attribute("aria-valuenow") == "1":
             break
+
+    # wait for duolingo to finish loading
+    WebDriverWait(driver, 60).until(
+            EC.text_to_be_present_in_element((By.XPATH, "//button[@data-test='player-next']/span"), "CONTINUE")
+        )
 
 if __name__ == "__main__":
     main()
