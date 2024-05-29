@@ -33,18 +33,7 @@ def main():
 
     # start a lesson
     while True:
-        while True:
-            try:
-                element = WebDriverWait(driver, 5).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, 'div._1DLP9._27IMa'))
-                    )
-                element.click()
-                driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
-                break
-            except:
-                print(f"{RED}Please close any notifications, retrying in 3 seconds...")
-                sleep(3)
-
+        driver.get("https://www.duolingo.com/lesson")
         sleep(0.5)
         print(f"{YELLOW} Starting Lesson..")
         complete_lesson(driver)
