@@ -33,20 +33,21 @@ def main():
 
     # start a lesson
     while True:
-        try:
-            element = WebDriverWait(driver, 5).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, 'div._1DLP9._27IMa'))
-                )
-            element.click()
-            break
-        except:
-            print(f"{RED}Please close any notifications, retrying in 3 seconds...")
-            sleep(3)
+        while True:
+            try:
+                element = WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, 'div._1DLP9._27IMa'))
+                    )
+                element.click()
+                break
+            except:
+                print(f"{RED}Please close any notifications, retrying in 3 seconds...")
+                sleep(3)
 
-    sleep(0.5)
-    driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
-    complete_lesson(driver)
-    input()
+        sleep(0.5)
+        driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
+        complete_lesson(driver)
+        driver.get("https://www.duolingo.com/learn")
     
 
 
@@ -121,12 +122,6 @@ def complete_lesson(driver):
         # if progress bar is full, break out of the loop
         if driver.find_element(By.XPATH, "//div[@aria-valuemax='1']").get_attribute("aria-valuenow") == "1":
             break
-
-    element = WebDriverWait(driver, 60).until(
-            EC.text_to_be_present_in_element((By.XPATH, "//button[@data-test='player-next']/span"), "CONTINUE")
-        )
-    element.click()
-    
 
 if __name__ == "__main__":
     main()
