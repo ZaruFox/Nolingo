@@ -39,13 +39,13 @@ def main():
                         EC.presence_of_element_located((By.CSS_SELECTOR, 'div._1DLP9._27IMa'))
                     )
                 element.click()
+                driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
                 break
             except:
                 print(f"{RED}Please close any notifications, retrying in 3 seconds...")
                 sleep(3)
 
         sleep(0.5)
-        driver.find_element(By.XPATH, "//a[@href='/lesson']").click()
         print(f"{YELLOW} Starting Lesson..")
         complete_lesson(driver)
         print(f"{GREEN} Lesson Complete!")
