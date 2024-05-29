@@ -95,7 +95,7 @@ class TranslationQuestion(Question):
         # matches largest choice to target string
         choices = self.driver.find_elements(By.XPATH, "//span[@data-test='challenge-tap-token-text']")
         choices.sort(key=lambda x:len(x.text), reverse=True)
-        target = " ".join([s.strip(",.!?:;") for s in self.answer.split()])
+        target = " ".join([s.strip(",.!?:¿¡;") for s in self.answer.split()])
 
         i = 0
         while i < len(target):
