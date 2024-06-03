@@ -31,14 +31,19 @@ def main():
     element.click()
     login(driver)
 
+    sleep(1)
     # start a lesson
     while True:
+        try:
+            driver.find_element(By.XPATH, "//div[text()='OPEN']").click()
+        except:
+            pass
         driver.get("https://www.duolingo.com/lesson")
-        sleep(0.5)
-        print(f"{YELLOW} Starting Lesson..")
+        print(f"{YELLOW}Starting Lesson..")
         complete_lesson(driver)
-        print(f"{GREEN} Lesson Complete!")
+        print(f"{GREEN}Lesson Complete!")
         driver.get("https://www.duolingo.com/learn")
+        sleep(0.5)
     
 
 
@@ -87,7 +92,7 @@ def complete_lesson(driver):
         skipButton.click()
 
     while True:
-        sleep(0.4)
+        sleep(0.45)
         # skip if it is transition screen
         if (skipButton := driver.find_element(By.XPATH, "//button[@data-test='player-next']/span")).text.lower() == "continue":
             skipButton.click()
