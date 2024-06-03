@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
@@ -13,8 +14,17 @@ GREEN = "\033[1;32;40m"
 YELLOW = "\033[1;33;40m"
 
 def main():
+    # set chrome options
+    options = Options()
+    options.add_argument("--log-level=3")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--incognito")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
+
     # init driver
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(3)
 
     # open up Duo
@@ -76,7 +86,7 @@ def login(driver):
 
     # detect the login
     try:
-        WebDriverWait(driver, 7).until(
+        WebDriverWait(driver, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//a[@href='/learn'][@class='_1Mak3']"))
             )
     except:
