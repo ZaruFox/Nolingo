@@ -38,9 +38,17 @@ def main():
             driver.find_element(By.XPATH, "//div[text()='OPEN']").click()
         except:
             pass
+
+        # detect type of lesson
+        isStoryLesson = driver.find_element(By.XPATH, "(//button[@class='_3vGNs _2YF0P _1333i _22TV_ _3Jm09']/img[@class='_1B6UH'])[last()]").get_attribute("src") == "https://d35aaqx5ub95lt.cloudfront.net/images/path/icons/7aa61c3f60bd961a60a46fb36e76c72f.svg"
+        
         driver.get("https://www.duolingo.com/lesson")
         print(f"{YELLOW}Starting Lesson..")
-        complete_lesson(driver)
+        if not isStoryLesson:
+            complete_normal_lesson(driver)
+        else:
+            complete_story_lesson(driver)
+
         print(f"{GREEN}Lesson Complete!")
         driver.get("https://www.duolingo.com/learn")
         sleep(0.5)
@@ -79,7 +87,7 @@ def login(driver):
 
 
 
-def complete_lesson(driver):
+def complete_normal_lesson(driver):
     # wait for lesson to load
     try:
         skipButton = WebDriverWait(driver, 30).until(
@@ -126,6 +134,20 @@ def complete_lesson(driver):
     WebDriverWait(driver, 60).until(
             EC.text_to_be_present_in_element((By.XPATH, "//button[@data-test='player-next']/span"), "CONTINUE")
         )
+    
+def complete_story_lesson(driver):
+    # wait for lesson to load
+    try:
+        skipButton = WebDriverWait(driver, 30).until(
+                EC.presence_of_element_located((By.XPATH, "//button[@data-test='player-next']/span"))
+            )
+    except:
+        print(f"{RED}Lesson load timed out. Exiting..")
+        exit(0)
+
+    # get pass challange screen if it shows up
+    if "start challenge" in skipButton.text.lower():
+        skipButton.click()
 
 if __name__ == "__main__":
     main()
