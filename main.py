@@ -61,7 +61,9 @@ def login(driver):
 
     # login
     driver.find_element(By.ID, "web-ui1").send_keys(username)
+    sleep(0.05)
     driver.find_element(By.ID, "web-ui2").send_keys(password)
+    sleep(0.05)
     driver.find_element(By.CSS_SELECTOR, 'button.WxjqG._1x5JY._1M9iF._36g4N._2YF0P._1QN-w').click()
 
     # detect the login
