@@ -19,11 +19,19 @@ class Question:
         # initializes correct question type class given duolingo's question type
         # OR if question was seen before, return the question object
 
-        questionsMap = {"challenge challenge-readComprehension": GapFillQuestion,"challenge challenge-dialogue": GapFillQuestion, "challenge challenge-listenIsolation": ListenQuestion, "challenge challenge-select": SelectionQuestion, "challenge challenge-translate": TranslationQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-completeReverseTranslation": TextTranslationQuestion, "challenge challenge-gapFill": GapFillQuestion}
-        if newQuestionType not in questionsMap:
+        questionsMap = {"challenge challenge-readComprehension": GapFillQuestion,"challenge challenge-dialogue": GapFillQuestion, "challenge challenge-listenIsolation": ListenQuestion, "challenge challenge-select": SelectionQuestion, "challenge challenge-listenTap": ListenQuestion, "challenge challenge-tapComplete": TapCompleteQuestion, "challenge challenge-match": MatchQuestion, "challenge challenge-assist": AssistQuestion, "challenge challenge-listenMatch": ListenQuestion, "challenge challenge-speak": ListenQuestion, "challenge challenge-listenComplete": ListenQuestion, "challenge challenge-gapFill": GapFillQuestion}
+        if newQuestionType in ("challenge challenge-translate", "challenge challenge-completeReverseTranslation"):
+            try:
+                driver.find_element(By.XPATH, "//span[@data-test='challenge-tap-token-text']")   
+                newQuestion = TranslationQuestion(driver)
+            except:
+                newQuestion = TextTranslationQuestion(driver)
+
+        elif newQuestionType in questionsMap:
+            newQuestion = questionsMap[newQuestionType](driver)
+        else:
             raise Exception(f"Question Type not found: {newQuestionType}")
         
-        newQuestion = questionsMap[newQuestionType](driver)
         if str(newQuestion) in cls.allQuestions:
             return cls.allQuestions[str(newQuestion)]
         cls.allQuestions[str(newQuestion)] = newQuestion
@@ -206,6 +214,7 @@ class TextTranslationQuestion(Question):
         self.clickNext()
 
 class GapFillQuestion(AssistQuestion):
+    questionType = "GapFill"
     def recordQuestion(self):
         tmp = self.driver.find_elements(By.XPATH, "//span[@class='_5HFLU']/span/span")
         self.questionData = "".join([x.text for x in tmp])

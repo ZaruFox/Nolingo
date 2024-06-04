@@ -19,7 +19,6 @@ def main():
     options.add_argument("--log-level=3")
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-extensions")
-    options.add_argument("--incognito")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
 
@@ -78,10 +77,15 @@ def login(driver):
         password = input("Password: ")
 
     # login
-    driver.find_element(By.ID, "web-ui1").send_keys(username)
-    sleep(0.05)
-    driver.find_element(By.ID, "web-ui2").send_keys(password)
-    sleep(0.05)
+    usernameField = driver.find_element(By.XPATH, "//input[@data-test='email-input']")
+    passwordField = driver.find_element(By.XPATH, "//input[@data-test='password-input']")
+
+    usernameField.click()
+    usernameField.clear()
+    usernameField.send_keys(username)
+    passwordField.click()
+    passwordField.clear()
+    passwordField.send_keys(password)
     driver.find_element(By.CSS_SELECTOR, 'button.WxjqG._1x5JY._1M9iF._36g4N._2YF0P._1QN-w').click()
 
     # detect the login
@@ -101,14 +105,14 @@ def complete_normal_lesson(driver):
     # wait for lesson to load
     try:
         skipButton = WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.XPATH, "//button[@data-test='player-next']/span"))
+                EC.presence_of_element_located((By.XPATH, "//button[@data-test='player-next']"))
             )
     except:
         print(f"{RED}Lesson load timed out. Exiting..")
         exit(0)
 
     # get pass challange screen if it shows up
-    if "start challenge" in skipButton.text.lower():
+    if skipButton.get_attribute("aria-disabled") == "false":
         skipButton.click()
 
     while True:
